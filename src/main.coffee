@@ -112,21 +112,6 @@ do ->
         @currentSelected = null
         @currentSelectedDomElement = null
 
-        @clickStream = $(@renderer.domElement).asEventStream("mousedown").filter((_) -> @INTERSECTED?)
-        @clickStream.onValue( (e) ->
-            #showInfo(@INTERSECTED)
-            if (@INTERSECTED is @cube)
-                #console.log "hello"
-                if (@vector?)
-                    #@boxes[0].activate()
-                    vec = @vector.clone()
-                    vec.normalize()
-                    vec.multiplyScalar(20)
-                    vec.y *= -10
-                    console.log vec
-                    #@boxes[0].applyImpulse(new Ammo.btVector3( vec.x, vec.y, vec.z ), new Ammo.btVector3( 0, 0, 0 ))
-        )
-
         @renderer.shadowMapEnabled = true;
         @renderDivElement = document.createElement("div")
         #document.body.appendChild @renderDivElement
@@ -366,27 +351,6 @@ do ->
         
 
         #console.log(@mouse)
-    
-    updatePicking = ->
-        @intersects = []
-        if @mouse.x?
-            @vector = new THREE.Vector3(@mouse.x, @mouse.y, -1)
-            @projector.unprojectVector( @vector, @camera )
-            @raycaster = new THREE.Raycaster( @camera.position, @vector.sub( @camera.position ).normalize() )
-            @intersects = @raycaster.intersectObjects( @scene.children );
-
-        if (@intersects.length > 0)
-            if @INTERSECTED isnt @intersects[ 0 ].object
-                if (@INTERSECTED?) then @INTERSECTED.material.emissive.setHex( @INTERSECTED.currentHex )
-                @INTERSECTED = @intersects[ 0 ].object
-                @INTERSECTED.currentHex = @INTERSECTED.material.emissive.getHex()
-                @INTERSECTED.material.emissive.setHex( 0xff0000 )
-        else    
-            if ( @INTERSECTED ) then @INTERSECTED.material.emissive.setHex( @INTERSECTED.currentHex )
-            @INTERSECTED = null
-         
-    
-        
     @oldTime = new Date
   
     updateUpdateBus = ->
