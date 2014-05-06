@@ -1,0 +1,1 @@
+coffee --join all.js --output lib src
