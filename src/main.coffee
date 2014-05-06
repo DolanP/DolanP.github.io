@@ -124,64 +124,10 @@ do ->
             @mouse.x = (e.offsetX / @width) * 2 - 1
             @mouse.y = ((e.offsetY / @height) * 2 - 1) * -1
         )
-
-
-        @geometry = new THREE.CubeGeometry(1,1,1)
-        @material = new THREE.MeshPhongMaterial({
-            ambient        : 0x444444,
-            color		: 0x8844AA,
-            shininess	: 300, 
-            specular	: 0x33AA33,
-            shading		: THREE.SmoothShading 
-        })
-        @cube = new THREE.Mesh( @geometry, @material )
-        
-        #@planeGeom = new THREE.PlaneGeometry( 10, 10, 20, 20 )
-        xMin = -10.0
-        xMax = 10.0
-        zMin = 10.0
-        zMax = -10.0
-        
-        func = (x,z) -> x*x + z*z
-        uTransform = (u) -> ( u * (xMax - xMin) ) + xMin
-        vTransform = (v) -> ( v * (zMax - zMin) ) + zMin
-        
-        parametricFunc = (u,v) ->
-            x = uTransform u
-            z = vTransform v
-            y = func( x, z )
-            new THREE.Vector3( x, y, z )
-        
-        #@planeGeom = new THREE.ParametricGeometry( parametricFunc, 20, 20 )
-        @planeGeom = new THREE.PlaneGeometry(1000, 1000, 100, 100)
-        
-        #console.log @planeGeom
-         
-        
-        @planeMat = new THREE.MeshPhongMaterial({
-            ambient    	: 0x444444,
-            color		: 0x554455,
-            shininess	: 10, 
-            specular	: 0x33AA33,
-            shading		: THREE.SmoothShading 
-        })
-        
-        ###@planeMat = new THREE.MeshBasicMaterial({
-            wireframe:true
-        })
-        ###
-        #console.log @planeMat
-        @plane = new THREE.Mesh( @planeGeom, @planeMat )
-        @plane.position.y = 0
-        @plane.rotation.x = -Math.PI/2
-        #@cube.castShadow = true;
-        @plane.receiveShadow  = true;
-        #@scene.add( @cube )
         
         @axisHelper = new THREE.AxisHelper( 10 )
         @scene.add( @axisHelper )
         
-        #@scene.add( @plane )
         @myBot = new Bot(@world, @scene)
         #@scene.add( @myBot )
         #@myBot.addToScene( @scene )
