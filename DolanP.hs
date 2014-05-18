@@ -2,36 +2,100 @@ import Haste
 import Haste.Graphics.Canvas
 --import Control.Wire
 
-squareShape :: Shape ()
-squareShape = do
-  rect (-20, -20) (20, 20)
 
-circleShape = do
-  translate (-x/2.0, -y/2.0) $ stroke $ circle (x, y) r
-  stroke $ circle (x, y) r
+
+getWidth :: IO String
+getWidth = withElem "canvas" (\c -> getProp c "width")
+
+getHeight :: IO String
+getHeight = withElem "canvas" (\c -> getProp c "height")
+
+getClientWidth :: IO String
+getClientWidth = withElem "MAIN_HTML" (\e -> getProp e "clientWidth")
+
+getClientHeight :: IO String
+getClientHeight = withElem "MAIN_HTML" (\e -> getProp e "clientHeight")
+
+--setCanvasSize :: (Int, Int) -> IO ()
+
+
+-- IO (Width, Height)
+adjustSize :: IO (Double, Double)
+adjustSize = do
+  Just cWidth <- (return . fromString) =<< getClientWidth :: IO (Maybe Double)
+  Just cHeight <- (return . fromString) =<< getClientHeight :: IO (Maybe Double)
+  setCanvasSize (floor (cWidth * 0.9), floor (cHeight * 0.9))
+  Just width <- (return . fromString) =<< getWidth :: IO (Maybe Double)
+  Just height <- (return . fromString) =<< getHeight :: IO (Maybe Double)
+  return (width, height)
   where
-    (x, y) = (20, 20)
-    r = 20
+    setCanvasSize :: (Int, Int) -> IO ()
+    setCanvasSize (cW, cH) = do
+      withElem "canvas" (\e -> setProp e "width" $ toString cW)
+      withElem "canvas" (\e -> setProp e "height" $ toString cH)
 
-square :: Picture ()
-square = stroke squareShape
+circleShape r = do
+  --translate (-r, -r) $ stroke $ circle (0, 0) r
+  stroke $ circle (0, 0) r
+
+--(width, height) = (320, 320)
+
+hGraph :: (Double, Double) -> Double -> Picture ()
+hGraph (w, h) t = do
+  translate (w*0.3,h*0.3) $ scale (1.0, -1.0) $ stroke $ do
+    --line (x0, y0) (x1, y1)
+    line (x0, y0) (x2, y2)
+    line (0.0, 0.1*h) (0.6*w,0.1*h)
+  where 
+    (x0, y0) = (0.0, 0.0)
+    (x1, y1) = (0.6*w, 0.0)
+    (x2, y2) = (0.0, 0.2*h)
+
+vGraph :: (Double, Double) -> Double -> Picture ()
+vGraph (w, h) t = do
+  translate (0.2*w-0.1*h,0.5*h) $ scale (1.0, -1.0) $ stroke $ do
+    line (x0, y0) (x1, y1)
+    --line (x0, y0) (x2, y2)
+    line (0.1*h, 0.0) (0.1*h, -0.4*h)
+  where 
+    (x0, y0) = (0.0, 0.0)
+    (x1, y1) = (0.2*h, 0.0)
+    (x2, y2) = (0.0, -0.4*h)  
+
+
+
 
 main :: IO ()
 main = do
   Just canvas <- getCanvasById "canvas"
-  animate canvas 0
+  adjustSize >>= (\(w,h) -> animate canvas (w,h) 0)
 
 time :: Int
 time = 10
 
-animate :: Canvas -> Double -> IO ()
-animate canvas t = do
+text' s = color (RGBA 0 0 0 0.5) . font "20px Bitstream Vera" $ do
+  text (0.0, 0.0) s
+
+animate' :: Canvas -> Double -> (Double, Double) -> IO ()
+animate' c t (w, h) = animate c (w, h) t
+
+-- Cancas -> (Width, Height) -> Time -> IO ()
+animate :: Canvas -> (Double, Double) -> Double -> IO ()
+animate canvas (w, h) t = do
   render canvas $ do
-    translate (160, 160) $ do
-      --scale (s, s) circleShape
-      circleShape
-  setTimeout time $ animate canvas (t + (fromIntegral time))
+    hGraph (w, h) t
+    vGraph (w, h) t
+    translate (w*0.2,h*0.2) $ do
+      circleShape r 
+      stroke $ line (0, 0) (lx, ly)
+      stroke $ line (lx, ly) (0.1*w, ly)
+      stroke $ line (lx, ly) (lx, 0.3*h)
+    --translate (w/2, h/2) $ rotate (t/100.0) $ text' ("" ++ show w ++ ", " ++ show h)
+  setTimeout time $ adjustSize >>= animate' canvas (t + (fromIntegral time))
   where
     t' = t / 1000.0
     s = 1.0 - (sin t')
+    r = h * 0.1
+    (lx, ly) = (r * cos t', r * sin t')
+    m = min w h
 
