@@ -1,0 +1,80 @@
+Elm.Main = Elm.Main || {};
+Elm.Main.make = function (_elm) {
+   "use strict";
+   _elm.Main = _elm.Main || {};
+   if (_elm.Main.values)
+   return _elm.Main.values;
+   var _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   _E = _N.Error.make(_elm),
+   $moduleName = "Main";
+   var Basics = Elm.Basics.make(_elm);
+   var Color = Elm.Color.make(_elm);
+   var Graphics = Graphics || {};
+   Graphics.Collage = Elm.Graphics.Collage.make(_elm);
+   var Graphics = Graphics || {};
+   Graphics.Element = Elm.Graphics.Element.make(_elm);
+   var List = Elm.List.make(_elm);
+   var Maybe = Elm.Maybe.make(_elm);
+   var Mouse = Elm.Mouse.make(_elm);
+   var Native = Native || {};
+   Native.Json = Elm.Native.Json.make(_elm);
+   var Native = Native || {};
+   Native.Ports = Elm.Native.Ports.make(_elm);
+   var Random = Elm.Random.make(_elm);
+   var Signal = Elm.Signal.make(_elm);
+   var String = Elm.String.make(_elm);
+   var Text = Elm.Text.make(_elm);
+   var Time = Elm.Time.make(_elm);
+   var Window = Elm.Window.make(_elm);
+   var _op = {};
+   var totalTimeMs = function () {
+      var ms = A2(Signal.lift,
+      function (t) {
+         return Time.inMilliseconds(t);
+      },
+      Time.fps(60));
+      return A3(Signal.foldp,
+      F2(function (x,y) {
+         return x + y;
+      }),
+      0.0,
+      ms);
+   }();
+   var main = function () {
+      var aSquare = function (t) {
+         return Graphics.Collage.rotate(t)(A2(Graphics.Collage.outlined,
+         Graphics.Collage.solid(Color.darkBlue),
+         Graphics.Collage.square(50.0)));
+      };
+      var aPath = function (t) {
+         return A2(Graphics.Collage.traced,
+         Graphics.Collage.solid(Color.red),
+         Graphics.Collage.path(_L.fromArray([{ctor: "_Tuple2"
+                                             ,_0: 0
+                                             ,_1: 0}
+                                            ,{ctor: "_Tuple2"
+                                             ,_0: 100 * Basics.sin(t)
+                                             ,_1: 200 * Basics.cos(t)}])));
+      };
+      return A4(Signal.lift3,
+      F3(function (w,h,t) {
+         return function () {
+            var t$ = t / 1000;
+            return A3(Graphics.Collage.collage,
+            w,
+            h,
+            _L.fromArray([aPath(t$)
+                         ,aSquare(t$)]));
+         }();
+      }),
+      Window.width,
+      Window.height,
+      totalTimeMs);
+   }();
+   _elm.Main.values = {_op: _op
+                      ,main: main
+                      ,totalTimeMs: totalTimeMs};
+   return _elm.Main.values;
+};

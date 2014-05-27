@@ -1,20 +1,21 @@
 import Haste
 import Haste.Graphics.Canvas
---import Control.Wire
+import Control.Wire
+import Prelude hiding ((.), id)
 
 
 
 getWidth :: IO String
-getWidth = withElem "canvas" (\c -> getProp c "width")
+getWidth = withElem "canvas" (`getProp` "width")
 
 getHeight :: IO String
-getHeight = withElem "canvas" (\c -> getProp c "height")
+getHeight = withElem "canvas" (`getProp` "height")
 
 getClientWidth :: IO String
-getClientWidth = withElem "MAIN_HTML" (\e -> getProp e "clientWidth")
+getClientWidth = withElem "MAIN_HTML" (`getProp` "clientWidth")
 
 getClientHeight :: IO String
-getClientHeight = withElem "MAIN_HTML" (\e -> getProp e "clientHeight")
+getClientHeight = withElem "MAIN_HTML" (`getProp` "clientHeight")
 
 --setCanvasSize :: (Int, Int) -> IO ()
 
@@ -34,7 +35,8 @@ adjustSize = do
       withElem "canvas" (\e -> setProp e "width" $ toString cW)
       withElem "canvas" (\e -> setProp e "height" $ toString cH)
 
-circleShape r = do
+circleShape :: Double -> Picture ()
+circleShape r = -- do
   --translate (-r, -r) $ stroke $ circle (0, 0) r
   stroke $ circle (0, 0) r
 
@@ -68,10 +70,10 @@ vGraph (w, h) t = do
 main :: IO ()
 main = do
   Just canvas <- getCanvasById "canvas"
-  adjustSize >>= (\(w,h) -> animate canvas (w,h) 0)
+  adjustSize >>= (\(w,h) -> animate'' canvas (w,h) animWire)
 
-time :: Int
-time = 10
+timeStep :: Int
+timeStep = 10
 
 text' s = color (RGBA 0 0 0 0.5) . font "20px Bitstream Vera" $ do
   text (0.0, 0.0) s
@@ -91,11 +93,31 @@ animate canvas (w, h) t = do
       stroke $ line (lx, ly) (0.1*w, ly)
       stroke $ line (lx, ly) (lx, 0.3*h)
     --translate (w/2, h/2) $ rotate (t/100.0) $ text' ("" ++ show w ++ ", " ++ show h)
-  setTimeout time $ adjustSize >>= animate' canvas (t + (fromIntegral time))
+  setTimeout timeStep $ adjustSize >>= animate' canvas (t + (fromIntegral timeStep))
   where
     t' = t / 1000.0
     s = 1.0 - (sin t')
     r = h * 0.1
     (lx, ly) = (r * cos t', r * sin t')
     m = min w h
+
+--type WireP = Wire s 
+
+animate'' :: Canvas -> (Double, Double) -> Wire (Timed NominalDiffTime ()) () IO () (Picture ()) -> IO ()
+animate'' canvas (w, h) wire = do
+  (Right output, newWire) <- stepWire wire (Timed 10 ()) (Right ())
+  render canvas output
+  setTimeout timeStep $ adjustSize >>= (\(w,h) -> animate'' canvas (w, h) newWire)
+  --return ()
+
+animWire :: Wire (Timed NominalDiffTime ()) () IO () (Picture ())
+animWire = mkConst $ Right $ circleShape 10.0 
+
+
+
+
+
+
+--get time run t and create Timed t ()
+--call stepWire
 
