@@ -1,4 +1,4 @@
-importScripts("/precache-manifest.97e48b8b30d0b492e9ecd0c647ab9830.js", "/workbox-v4.3.1/workbox-sw.js");
+importScripts("/precache-manifest.fd0ace1d35a3041df7bcb25b7318f839.js", "/workbox-v4.3.1/workbox-sw.js");
 workbox.setConfig({modulePathPrefix: "/workbox-v4.3.1"});
 // Detailed logging is very useful during development
 //workbox.setConfig({ debug: true });
