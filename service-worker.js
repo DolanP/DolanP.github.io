@@ -1,4 +1,4 @@
-importScripts("/precache-manifest.c55eb1241ede5f836b0e83d12102d127.js", "/workbox-v4.3.1/workbox-sw.js");
+importScripts("/precache-manifest.40d9a308a778caeba0d650f37d0a475f.js", "/workbox-v4.3.1/workbox-sw.js");
 workbox.setConfig({modulePathPrefix: "/workbox-v4.3.1"});
 /* eslint-disable no-undef */
 
