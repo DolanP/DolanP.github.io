@@ -1,4 +1,4 @@
-importScripts("/precache-manifest.279e5422a46bfe7048002b21cf5d739b.js", "/workbox-v4.3.1/workbox-sw.js");
+importScripts("/precache-manifest.c55eb1241ede5f836b0e83d12102d127.js", "/workbox-v4.3.1/workbox-sw.js");
 workbox.setConfig({modulePathPrefix: "/workbox-v4.3.1"});
 /* eslint-disable no-undef */
 
@@ -25,6 +25,7 @@ workbox.routing.registerNavigationRoute(
 
 addEventListener("message", (event) => {
   if (event.data && event.data.type === "SKIP_WAITING") {
+    console.log(`service-worker.js receiving SKIP_WAITING message`)
     skipWaiting();
   }
 });
