@@ -146,7 +146,6 @@ void main() {
   <canvas></canvas>
   <div id="overlay">
     <div>Time: <span id="time"></span></div>
-    
     <button id="button">Button</button>
   </div>
 </div>`;class ho{load(n){n.innerHTML=To;const t=document.querySelector("#time");if(!t)throw Error;const o=document.createTextNode("");t.appendChild(o);const r=document.querySelector("#button");r.onclick=i=>{console.log(i)},requestAnimationFrame(function i(a){o.nodeValue=(a/1e3).toFixed(2),requestAnimationFrame(i)})}unload(){}}const Eo=new ho,hn=[{name:"main-menu",app:bn,path:"/"},{name:"example-1 - fullscreen quad",app:Gr,path:"/quad"},{name:"example-2 - spinning cube",app:eo,path:"/spinning-cube"},{name:"example-3 - grid",app:so,path:"/grid"},{name:"example-4 - directional lighting",app:lo,path:"/directional-lighting"},{name:"example-5 - input",app:_o,path:"/input"},{name:"Example 6 - UI Overlay",app:Eo,path:"/ui-overlay"}],xo=document.getElementById("app");console.log(window.location.pathname);const Re=hn.find(e=>e.path===window.location.pathname);Re?Re.app.load(xo):alert(`invalid suburl ${window.location.pathname}`);
